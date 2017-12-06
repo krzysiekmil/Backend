@@ -16,10 +16,10 @@ import pogodynka.model.CityData;
 import pogodynka.repository.CityDataRepository;
 import pogodynka.repository.CityRepository;
 
-import java.util.*;
+import java.util.List;
 
 @RestController
-@CrossOrigin
+
 public class Controller {
     @Autowired
     JobLauncher jobLauncher;
@@ -36,22 +36,27 @@ public class Controller {
     @Autowired
     CityRepository cityRepository;
 
-    //    /city/{name}
+  @GetMapping(value = "/welcome")
+  public String name() {
+    return "DZIALAM";
+  }
+
+
     @DeleteMapping(value = "/city")
     public void deleteCity(@RequestParam String name){
         City city =  cityRepository.findByName(name);
         cityRepository.delete(city);
     }
 
-    //    /city
-    @PostMapping(value = "/city")
+
+  @PostMapping(value = "/city")
     public void addCity(@RequestParam String name){
         if(!cityRepository.existsByName(name))
             cityRepository.save(new City(name));
     }
 
-    //    /cityData/{cityName}
-    @GetMapping(value = "/cityData/{name}")
+
+  @GetMapping(value = "/cityData/{name}")
     public List<CityData> showLast(@PathVariable String name ,@RequestParam Long value){
         return cityDataRepository.getLastValueTemp(name,value);
     }

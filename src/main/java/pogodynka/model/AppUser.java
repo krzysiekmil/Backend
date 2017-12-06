@@ -1,9 +1,7 @@
 package pogodynka.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class AppUser {
@@ -13,13 +11,20 @@ public class AppUser {
     private String username;
     private String password;
     private String[] cities;
-    private String[] roles;
 
-    public String[] getRoles() {
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinTable(name = "user_role", joinColumns
+    = @JoinColumn(name = "user_id",
+    referencedColumnName = "id"),
+    inverseJoinColumns = @JoinColumn(name = "role_id",
+      referencedColumnName = "id"))
+  private List<AppUserRole> roles;
+
+  public List<AppUserRole> getRoles() {
         return roles;
     }
 
-    public void setRoles(String[] roles) {
+  public void setRoles(List<AppUserRole> roles) {
         this.roles = roles;
     }
 
@@ -55,7 +60,7 @@ public class AppUser {
         this.cities = cities;
     }
 
-    public AppUser(String username, String password, String[] cities,String [] roles) {
+  public AppUser(String username, String password, String[] cities, List<AppUserRole> roles) {
         this.username = username;
         this.password = password;
         this.cities = cities;
