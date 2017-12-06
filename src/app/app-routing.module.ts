@@ -17,7 +17,7 @@ const routes: Routes = [
     component: WeatherComponent
   },
   {
-    path: 'admin',
+    path: 'admin_role',
     component: AdminComponent
   },
   {

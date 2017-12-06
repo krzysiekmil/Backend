@@ -20,9 +20,8 @@ export class AdminComponent implements OnInit {
   }
 
   addCity(cityName: string) {
-    this.cityList.push(this.city);
     this.dataService.addCityS(cityName).subscribe(this.getCityList);
-
+    this.cityList.push(this.city);
   }
 
   deleteCity(cityName: string) {

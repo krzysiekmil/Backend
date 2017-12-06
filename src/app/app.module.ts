@@ -13,6 +13,7 @@ import {HashLocationStrategy, LocationStrategy} from "@angular/common";
 import {LoginComponent} from './login/login.component';
 import {FormsModule} from "@angular/forms";
 import {RegistrationComponent} from './registration/registration.component';
+import {AuthGuard} from "./guards/auth.guard";
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import {RegistrationComponent} from './registration/registration.component';
     ChartComponent,
     LoginComponent,
     RegistrationComponent
+
   ],
   imports: [
     BrowserModule,
@@ -31,7 +33,13 @@ import {RegistrationComponent} from './registration/registration.component';
     ChartsModule,
     FormsModule
   ],
-  providers: [DataService, {provide: LocationStrategy, useClass: HashLocationStrategy}],
+  providers: [
+    DataService,
+    {provide: LocationStrategy, useClass: HashLocationStrategy},
+    AuthGuard
+
+
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule { }
