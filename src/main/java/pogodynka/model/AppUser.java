@@ -60,6 +60,11 @@ public class AppUser {
         this.cities = cities;
     }
 
+  public AppUser() {
+  }
+
+  ;
+
   public AppUser(String username, String password, String[] cities, List<AppUserRole> roles) {
         this.username = username;
         this.password = password;
