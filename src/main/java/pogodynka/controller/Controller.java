@@ -23,7 +23,9 @@ import pogodynka.repository.CityRepository;
 import pogodynka.repository.RoleRepository;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 public class Controller {
@@ -51,27 +53,61 @@ public class Controller {
   @Autowired
   PasswordEncoder passwordEncoder;
 
-  @PostMapping("/user")
-  public void AddUser(@RequestBody AppUser appUser) {
-    List<AppUserRole> roles = new ArrayList<>();
-    roles.add(roleRepository.findByRoleName("STANDARD_USER"));
-    appUserRepository.save(new AppUser(appUser.getUsername(), passwordEncoder.encode(appUser.getPassword()), null, roles));
+  @GetMapping("/user")
+  public List getUsers(@RequestParam(value = "name", required = false) String name) {
+    if (name == null) {
+      return appUserRepository.findAll();
+    } else {
+      return new ArrayList<>(appUserRepository.findByUsername(name).getCities());
+    }
   }
 
-  @PreAuthorize("hasAnyAuthority('ADMIN_USER') or hasAnyAuthority('STANDARD_USER')")
+  @PostMapping("/user")
+  public void AddUser(@RequestBody AppUser appUser, @RequestParam(value = "city", required = false) String city) throws Exception {
+    List<AppUserRole> roles = new ArrayList<>();
+    Set<City> citySet = new LinkedHashSet<>();
+    if (city == null) {
+      roles.add(roleRepository.findByRoleName("STANDARD_USER"));
+      if (appUserRepository.findByUsername(appUser.getUsername()) == null) {
+        appUserRepository.save(new AppUser(appUser.getUsername(), passwordEncoder.encode(appUser.getPassword()), citySet, roles));
+      }
+    } else {
+      if (cityRepository.findByName(city) != null) {
+        Long user = appUserRepository.findByUsername(appUser.getUsername()).getId();
+        Long _city = cityRepository.findByName(city).getId();
+        appUserRepository.addCity(user, _city);
+      }
+    }
+
+  }
+
+  @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER')")
+  @DeleteMapping("/user")
+  public void DeleteUser(@RequestBody AppUser appUser, @RequestParam(value = "city", required = false) String city) {
+    if (city == null) {
+      appUserRepository.delete(appUserRepository.findByUsername(appUser.getUsername()));
+    } else {
+      Long user = appUserRepository.findByUsername(appUser.getUsername()).getId();
+      Long _city = cityRepository.findByName(city).getId();
+      appUserRepository.deleteCity(user, _city);
+    }
+  }
+
+
+  @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER')")
   @DeleteMapping(value = "/city")
   public void deleteCity(@RequestParam String name){
     City city =  cityRepository.findByName(name);
     cityRepository.delete(city);
   }
 
-  @PreAuthorize("hasAnyAuthority('ADMIN_USER') or hasAnyAuthority('STANDARD_USER')")
+  @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER')")
   @GetMapping(value = "/city")
   public List<City> getAll() {
     return cityRepository.findAll();
   }
 
-  @PreAuthorize("hasAnyAuthority('ADMIN_USER')")
+  @PreAuthorize("hasAuthority('ADMIN_USER')")
   @PostMapping(value = "/city")
   public void addCity(@RequestParam String name){
     if(!cityRepository.existsByName(name))

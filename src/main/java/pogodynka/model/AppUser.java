@@ -2,6 +2,8 @@ package pogodynka.model;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
+
 
 @Entity
 public class AppUser {
@@ -10,14 +12,11 @@ public class AppUser {
     private Long id;
     private String username;
     private String password;
-    private String[] cities;
-
   @ManyToMany(fetch = FetchType.EAGER)
-  @JoinTable(name = "user_role", joinColumns
-    = @JoinColumn(name = "user_id",
-    referencedColumnName = "id"),
-    inverseJoinColumns = @JoinColumn(name = "role_id",
-      referencedColumnName = "id"))
+  @JoinTable(name = "user_cities", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "city_id", referencedColumnName = "id"))
+  private Set<City> cities;
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
   private List<AppUserRole> roles;
 
   public List<AppUserRole> getRoles() {
@@ -52,20 +51,18 @@ public class AppUser {
         this.password = password;
     }
 
-    public String[] getCities() {
-        return cities;
-    }
+  public Set<City> getCities() {
+    return cities;
+  }
 
-    public void setCities(String[] cities) {
-        this.cities = cities;
-    }
+  public void setCities(Set<City> cities) {
+    this.cities = cities;
+  }
 
   public AppUser() {
   }
 
-  ;
-
-  public AppUser(String username, String password, String[] cities, List<AppUserRole> roles) {
+  public AppUser(String username, String password, Set<City> cities, List<AppUserRole> roles) {
         this.username = username;
         this.password = password;
         this.cities = cities;
