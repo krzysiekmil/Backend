@@ -13,4 +13,7 @@ public interface CityRepository extends JpaRepository<City,Long>
      @Query(value = "SELECT * FROM city",nativeQuery = true)
      List<City> findAll();
      City findByName(String name);
+
+  @Query(value = "delete from user_cities where city_id =?1", nativeQuery = true)
+  void removeCity(Long city_id);
 }

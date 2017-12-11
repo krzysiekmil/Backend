@@ -83,14 +83,17 @@ public class Controller {
 
   @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER')")
   @DeleteMapping("/user")
-  public void DeleteUser(@RequestBody AppUser appUser, @RequestParam(value = "city", required = false) String city) {
-    if (city == null) {
-      appUserRepository.delete(appUserRepository.findByUsername(appUser.getUsername()));
-    } else {
-      Long user = appUserRepository.findByUsername(appUser.getUsername()).getId();
-      Long _city = cityRepository.findByName(city).getId();
-      appUserRepository.deleteCity(user, _city);
-    }
+  public void DeleteUser(@RequestParam(value = "name", required = true) String username) {
+    appUserRepository.delete(appUserRepository.findByUsername(username));
+  }
+
+  @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER')")
+  @DeleteMapping("/user/{username}")
+  public void DeleteUserCity(@PathVariable String username, @RequestParam(value = "city", required = true) String city) {
+    Long user = appUserRepository.findByUsername(username).getId();
+    Long _city = cityRepository.findByName(city).getId();
+    appUserRepository.deleteCity(user, _city);
+
   }
 
 
@@ -98,6 +101,7 @@ public class Controller {
   @DeleteMapping(value = "/city")
   public void deleteCity(@RequestParam String name){
     City city =  cityRepository.findByName(name);
+    cityRepository.removeCity(city.getId());
     cityRepository.delete(city);
   }
 
