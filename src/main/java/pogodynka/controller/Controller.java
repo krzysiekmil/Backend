@@ -73,9 +73,13 @@ public class Controller {
       }
     } else {
       if (cityRepository.findByName(city) != null) {
-        Long user = appUserRepository.findByUsername(appUser.getUsername()).getId();
-        Long _city = cityRepository.findByName(city).getId();
-        appUserRepository.addCity(user, _city);
+        appUserRepository.findByUsername(appUser.getUsername()).getCities().forEach(citySet::add);
+        citySet.add(cityRepository.findByName(city));
+        roles.add(roleRepository.findByRoleName("STANDARD_USER"));
+        String hash = appUserRepository.findByUsername(appUser.getUsername()).getPassword();
+        appUserRepository.delete(appUserRepository.findByUsername(appUser.getUsername()).getId());
+        appUserRepository.save(new AppUser(appUser.getUsername(), hash, citySet, roles));
+
       }
     }
 
@@ -90,10 +94,14 @@ public class Controller {
   @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER')")
   @DeleteMapping("/user/{username}")
   public void DeleteUserCity(@PathVariable String username, @RequestParam(value = "city", required = true) String city) {
-    Long user = appUserRepository.findByUsername(username).getId();
-    Long _city = cityRepository.findByName(city).getId();
-    appUserRepository.deleteCity(user, _city);
-
+    Set<City> citySet = new LinkedHashSet<>();
+    List<AppUserRole> roles = new ArrayList<>();
+    appUserRepository.findByUsername(username).getCities().forEach(citySet::add);
+    citySet.remove(cityRepository.findByName(city));
+    roles.add(roleRepository.findByRoleName("STANDARD_USER"));
+    String hash = appUserRepository.findByUsername(username).getPassword();
+    appUserRepository.delete(appUserRepository.findByUsername(username).getId());
+    appUserRepository.save(new AppUser(username, hash, citySet, roles));
   }
 
 
