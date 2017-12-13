@@ -9,6 +9,7 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -53,6 +54,7 @@ public class Controller {
   @Autowired
   PasswordEncoder passwordEncoder;
 
+  @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER')")
   @GetMapping("/user")
   public List getUsers(@RequestParam(value = "name", required = false) String name) {
     if (name == null) {
@@ -98,7 +100,7 @@ public class Controller {
     List<AppUserRole> roles = new ArrayList<>();
     appUserRepository.findByUsername(username).getCities().forEach(citySet::add);
     citySet.remove(cityRepository.findByName(city));
-    roles.add(roleRepository.findByRoleName("STANDARD_USER"));
+    appUserRepository.findByUsername(username).getRoles().forEach(roles::add);
     String hash = appUserRepository.findByUsername(username).getPassword();
     appUserRepository.delete(appUserRepository.findByUsername(username).getId());
     appUserRepository.save(new AppUser(username, hash, citySet, roles));
@@ -108,9 +110,14 @@ public class Controller {
   @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER')")
   @DeleteMapping(value = "/city")
   public void deleteCity(@RequestParam String name){
-    City city =  cityRepository.findByName(name);
-    cityRepository.removeCity(city.getId());
-    cityRepository.delete(city);
+    if (cityRepository.findByName(name) != null) {
+      City city = cityRepository.findByName(name);
+      try {
+        cityRepository.removeCity(city.getId());
+      } catch (JpaSystemException e) {
+        cityRepository.delete(city);
+      }
+    }
   }
 
   @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER')")
@@ -126,25 +133,25 @@ public class Controller {
       cityRepository.save(new City(name));
   }
 
-  @PreAuthorize("hasAnyAuthority('STANDARD_USER')")
+  @PreAuthorize("hasAuthority('STANDARD_USER')")
   @GetMapping(value = "/cityData/{name}")
     public List<CityData> showLast(@PathVariable String name ,@RequestParam Long value){
         return cityDataRepository.getLastValueTemp(name,value);
     }
 
-  @PreAuthorize("hasAnyAuthority('STANDARD_USER')")
+  @PreAuthorize("hasAuthority('STANDARD_USER')")
   @GetMapping(value = "/cityDatat/{name}")
     public List<CityData> give(@PathVariable String name){
         return cityDataRepository.findByName(name);
     }
 
-  @PreAuthorize("hasAnyAuthority('STANDARD_USER')")
+  @PreAuthorize("hasAuthority('STANDARD_USER')")
   @GetMapping(value = "/cityData")
     public List<CityData> getAllData(){
         return cityDataRepository.findAll();
     }
 
-  @PreAuthorize("hasAnyAuthority('STANDARD_USER')")
+  @PreAuthorize("hasAuthority('STANDARD_USER')")
   @Scheduled(fixedRate = 300000)
   @PostMapping(value = "/cityData")
     public void updateCities() throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
