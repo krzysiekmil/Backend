@@ -65,7 +65,7 @@ public class Controller {
   }
 
   @PostMapping("/user")
-  public void AddUser(@RequestBody AppUser appUser, @RequestParam(value = "city", required = false) String city) throws Exception {
+  public void AddUser(@RequestBody AppUser appUser, @RequestParam(value = "city", required = false) String city) throws JpaSystemException {
     List<AppUserRole> roles = new ArrayList<>();
     Set<City> citySet = new LinkedHashSet<>();
     if (city == null) {
@@ -75,17 +75,22 @@ public class Controller {
       }
     } else {
       if (cityRepository.findByName(city) != null) {
-        appUserRepository.findByUsername(appUser.getUsername()).getCities().forEach(citySet::add);
-        citySet.add(cityRepository.findByName(city));
-        roles.add(roleRepository.findByRoleName("STANDARD_USER"));
-        String hash = appUserRepository.findByUsername(appUser.getUsername()).getPassword();
-        appUserRepository.delete(appUserRepository.findByUsername(appUser.getUsername()).getId());
-        appUserRepository.save(new AppUser(appUser.getUsername(), hash, citySet, roles));
-
+        try {
+          appUserRepository.check(
+            appUserRepository.findByUsername(appUser.getUsername()).getId(),
+            cityRepository.findByName(city).getId());
+          {
+            cityRepository.addCity(
+              appUserRepository.findByUsername(appUser.getUsername()).getId(),
+              cityRepository.findByName(city).getId()
+            );
+          }
+        } catch (JpaSystemException e) {
+        }
       }
     }
-
   }
+
 
   @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER')")
   @DeleteMapping("/user")
@@ -173,6 +178,3 @@ public class Controller {
 
 
 }
-//cityData/Warszawa?value=100&sort=desc
-//City?letter=W
-//Cars?color=red
