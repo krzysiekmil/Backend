@@ -115,13 +115,10 @@ public class Controller {
   @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER')")
   @DeleteMapping(value = "/city")
   public void deleteCity(@RequestParam String name){
-    if (cityRepository.findByName(name) != null) {
-      City city = cityRepository.findByName(name);
-      try {
-        cityRepository.removeCity(city.getId());
-      } catch (JpaSystemException e) {
-        cityRepository.delete(city);
-      }
+    City city = cityRepository.findByName(name);
+    if (city != null) {
+      cityRepository.removeCity(city.getId());
+      cityRepository.delete(city);
     }
   }
 
