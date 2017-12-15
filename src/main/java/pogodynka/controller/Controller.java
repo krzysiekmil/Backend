@@ -79,12 +79,11 @@ public class Controller {
           appUserRepository.check(
             appUserRepository.findByUsername(appUser.getUsername()).getId(),
             cityRepository.findByName(city).getId());
-          {
             cityRepository.addCity(
               appUserRepository.findByUsername(appUser.getUsername()).getId(),
               cityRepository.findByName(city).getId()
             );
-          }
+
         } catch (JpaSystemException e) {
         }
       }
@@ -101,24 +100,30 @@ public class Controller {
   @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER')")
   @DeleteMapping("/user/{username}")
   public void DeleteUserCity(@PathVariable String username, @RequestParam(value = "city", required = true) String city) {
-    Set<City> citySet = new LinkedHashSet<>();
-    List<AppUserRole> roles = new ArrayList<>();
-    appUserRepository.findByUsername(username).getCities().forEach(citySet::add);
-    citySet.remove(cityRepository.findByName(city));
-    appUserRepository.findByUsername(username).getRoles().forEach(roles::add);
-    String hash = appUserRepository.findByUsername(username).getPassword();
-    appUserRepository.delete(appUserRepository.findByUsername(username).getId());
-    appUserRepository.save(new AppUser(username, hash, citySet, roles));
+    try {
+      AppUser u = appUserRepository.findByUsername(username);
+      City c = cityRepository.findByName(city);
+      if (c != null && u != null)
+        appUserRepository.deleteCity(
+          u.getId(),
+          c.getId());
+    } catch (JpaSystemException e) {
+
+
+    }
   }
 
 
   @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER')")
   @DeleteMapping(value = "/city")
-  public void deleteCity(@RequestParam String name){
+  public void deleteCity(@RequestParam String name) {
     City city = cityRepository.findByName(name);
     if (city != null) {
-      cityRepository.removeCity(city.getId());
-      cityRepository.delete(city);
+      try {
+        cityRepository.removeCity(city.getId());
+      } catch (JpaSystemException e) {
+        cityRepository.delete(city);
+      }
     }
   }
 

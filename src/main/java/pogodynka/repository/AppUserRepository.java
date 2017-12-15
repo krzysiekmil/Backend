@@ -14,7 +14,7 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
   public List getUserData();
 
   @Query(value = "DELETE FROM user_cities WHERE user_id = ?1 AND city_id = ?2 ", nativeQuery = true)
-  public void deleteCity(Long user_id, Long city_id);
+  public AppUser deleteCity(Long user_id, Long city_id);
 
   @Query(value = "SELECT * FROM user_cities WHERE user_id = ?1 AND city_id = ?2", nativeQuery = true)
   public List check(Long user_id, Long city_id);
