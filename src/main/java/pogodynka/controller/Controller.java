@@ -100,17 +100,17 @@ public class Controller {
   @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER')")
   @DeleteMapping("/user/{username}")
   public void DeleteUserCity(@PathVariable String username, @RequestParam(value = "city", required = true) String city) {
-    try {
       AppUser u = appUserRepository.findByUsername(username);
       City c = cityRepository.findByName(city);
       if (c != null && u != null)
-        appUserRepository.deleteCity(
-          u.getId(),
-          c.getId());
-    } catch (JpaSystemException e) {
+        try {
+          appUserRepository.deleteCity(
+            u.getId(),
+            c.getId());
+        } catch (JpaSystemException e) {
 
 
-    }
+        }
   }
 
 
