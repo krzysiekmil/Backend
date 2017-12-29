@@ -17,7 +17,7 @@ import pogodynka.repository.AppUserRepository;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -42,14 +42,17 @@ public class ControllerTest {
   public void test() throws Exception {
     List<AppUser> test = new LinkedList<>();
     test.add(new AppUser("asd", "asd", null, null));
-    given(this.appUserRepository.findAll()).willReturn(test);
-//    when(appUserRepository.findByUsername("asd")).thenCallRealMethod();
+//    given(this.appUserRepository.findAll()).willReturn(test);
+    when(appUserRepository.findByUsername("asd")).thenReturn(new AppUser("ASD", "asda", null, null));
     mvc.perform(
-      get("/user")
+      get("/test")
 //      .param("name","asd2")
     )
       .andExpect(status().is2xxSuccessful())
-      .andExpect(content().string("{\"id\":1,\"name\":\"Warszawa\"}"));
+//      .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+      .andExpect(content().string(new AppUser("ASD", "asda", null, null).toString()));
+
+
 
   }
 
