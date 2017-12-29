@@ -36,11 +36,9 @@ public class ResourceConfig extends ResourceServerConfigurerAdapter {
 
   public void configure(HttpSecurity httpSecurity) throws Exception {
     httpSecurity
-      .requestMatchers()
-      .and()
       .authorizeRequests()
-      .antMatchers("/welcome/**").permitAll()
-      .antMatchers("/city", "/cityData", "/cityDatat").permitAll();
+      .antMatchers("/test").permitAll()
+      .antMatchers("/city", "*/cityData", "/cityDatat").permitAll();
 
   }
 

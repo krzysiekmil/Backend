@@ -30,11 +30,14 @@ import java.util.Set;
 
 @RestController
 public class Controller {
+
+
   @Autowired
   JobLauncher jobLauncher;
 
   @Autowired
   CityDataRepository cityDataRepository;
+
 
   @Autowired
   Job job;
@@ -53,6 +56,7 @@ public class Controller {
 
   @Autowired
   PasswordEncoder passwordEncoder;
+
 
   @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER')")
   @GetMapping("/user")
