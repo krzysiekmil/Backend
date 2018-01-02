@@ -181,11 +181,4 @@ public class Controller {
                     .toJobParameters();
             jobLauncher.run(job, jobParameters);
     }
-
-  @GetMapping(value = "/test")
-  public AppUser test() {
-    return appUserRepository.findByUsername("asd");
-  }
-
-
 }

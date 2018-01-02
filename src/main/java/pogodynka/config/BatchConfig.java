@@ -17,16 +17,16 @@ import pogodynka.step.cityStep.CityDataDto;
 import pogodynka.step.cityStep.Processor;
 import pogodynka.step.cityStep.Reader;
 import pogodynka.step.cityStep.Writer;
+
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 
 @EnableBatchProcessing
 @Configuration
 public class BatchConfig {
 
-    @Autowired
+
+  @Autowired
     public JobBuilderFactory jobBuilderFactory;
 
     @Autowired

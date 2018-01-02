@@ -56,6 +56,25 @@ public class CityData {
         this.id = id;
     }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
 
+    CityData cityData = (CityData) o;
 
+    if (id != null ? !id.equals(cityData.id) : cityData.id != null) return false;
+    if (name != null ? !name.equals(cityData.name) : cityData.name != null) return false;
+    if (time != null ? !time.equals(cityData.time) : cityData.time != null) return false;
+    return temp != null ? temp.equals(cityData.temp) : cityData.temp == null;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = id != null ? id.hashCode() : 0;
+    result = 31 * result + (name != null ? name.hashCode() : 0);
+    result = 31 * result + (time != null ? time.hashCode() : 0);
+    result = 31 * result + (temp != null ? temp.hashCode() : 0);
+    return result;
+  }
 }
