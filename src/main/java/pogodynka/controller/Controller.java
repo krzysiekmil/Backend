@@ -175,7 +175,7 @@ public class Controller {
 
     @PostMapping(value = "/cityData/{name}")
     public void downloadData(@PathVariable String name) throws Exception {
-      if (name.isEmpty()) {
+      if (!name.isEmpty()) {
         JobParameters jobParameters = new JobParametersBuilder()
           .addLong("time", System.nanoTime())
           .addString("city", name)
