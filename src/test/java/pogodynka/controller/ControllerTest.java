@@ -23,9 +23,8 @@ import java.util.List;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -95,10 +94,9 @@ public class ControllerTest {
 
   @Test
   public void showLastError() throws Exception, NotFoundException {
-    when(controller.showLast("Warszawa", 1l)).thenThrow(new NotFoundException(""));
-    mvc.perform(get("/cityData/{name}", "Warszawa").contentType(MediaType.APPLICATION_JSON_UTF8).param("valuessd", "1"))
-      .andExpect(status().is4xxClientError());
-    verify(controller, times(1)).showLast("Warszawa", 1l);
+//    when(controller.showLast("Warszawa", 1l)).thenThrow(new Exception() );
+    mvc.perform(get("/cityData/{name}", "Warszawa").contentType(MediaType.APPLICATION_JSON_UTF8).param("values", "1"))
+      .andExpect(status().isBadRequest());
     verifyNoMoreInteractions(controller);
   }
 
@@ -126,6 +124,32 @@ public class ControllerTest {
       .andExpect(status().isBadRequest());
   }
 
+  @Test
+  public void AddUser() throws Exception {
+    String body = "{\"username\":\"user\",\"password\":\"password\"}";
+    mvc.perform(post("/user").param("city", "City")
+      .content(body)
+      .contentType(MediaType.APPLICATION_JSON_UTF8))
+      .andExpect(status().is2xxSuccessful());
+  }
 
+  @Test
+  public void AddUserBadRequest() throws Exception {
+    mvc.perform(post("/user").param("city", "City")
+      .contentType(MediaType.APPLICATION_JSON_UTF8))
+      .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void AddCity() throws Exception {
+    mvc.perform(post("/city").param("name", "City"))
+      .andExpect(status().is2xxSuccessful());
+  }
+
+  @Test
+  public void AddCityBadRequest() throws Exception {
+    mvc.perform(post("/city").param("names", "City"))
+      .andExpect(status().isBadRequest());
+  }
 
 }

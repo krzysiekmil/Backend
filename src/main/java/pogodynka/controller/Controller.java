@@ -174,11 +174,13 @@ public class Controller {
     }
 
     @PostMapping(value = "/cityData/{name}")
-    public void downloadData(@PathVariable String name) throws Exception{
-            JobParameters jobParameters = new JobParametersBuilder()
-                    .addLong("time", System.nanoTime())
-                    .addString("city", name)
-                    .toJobParameters();
-            jobLauncher.run(job, jobParameters);
+    public void downloadData(@PathVariable String name) throws Exception {
+      if (name.isEmpty()) {
+        JobParameters jobParameters = new JobParametersBuilder()
+          .addLong("time", System.nanoTime())
+          .addString("city", name)
+          .toJobParameters();
+        jobLauncher.run(job, jobParameters);
+      }
     }
 }
