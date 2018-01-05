@@ -9,17 +9,19 @@ import pogodynka.repository.CityRepository;
 import java.util.List;
 
 public class Writer implements ItemWriter<CityData> {
-    @Autowired
-    CityDataRepository cityDataRepository;
+  @Autowired
+  public CityDataRepository cityDataRepository;
     @Autowired
     CityRepository cityRepository;
 
     @Override
     public void write(List<? extends CityData> listOfList) {
+      if (listOfList == null) {
         for(CityData cityData:listOfList){
-            CityData test = cityData;
+          CityData test = cityData;
         }
         cityDataRepository.save(listOfList);
+      }
     }
 
 

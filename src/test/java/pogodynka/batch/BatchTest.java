@@ -1,6 +1,5 @@
 package pogodynka.batch;
 
-import org.codehaus.jettison.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.batch.core.*;
@@ -18,12 +17,10 @@ import pogodynka.repository.CityRepository;
 import pogodynka.step.cityStep.Processor;
 import pogodynka.step.cityStep.Reader;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.mockito.BDDMockito.given;
 
 @RunWith(SpringRunner.class)
@@ -95,10 +92,5 @@ public class BatchTest {
     JobExecution execution = jobLauncherTestUtils.launchStep("cityStep");
     assertEquals(cityRepository.findAll().isEmpty(), false);
     assertEquals(ExitStatus.COMPLETED, execution.getExitStatus());
-  }
-
-  @Test
-  public void testReader() throws IOException, JSONException {
-    assertNotNull(reader.read());
   }
 }

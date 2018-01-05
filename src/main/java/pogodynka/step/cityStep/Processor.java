@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import pogodynka.model.CityData;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 
 @Component
@@ -22,7 +21,7 @@ public class Processor implements ItemProcessor<CityDataDto, CityData> {
         return null;
     }
 
-    private Object getTempData(Object query) {
+  public Object getTempData(Object query) {
         Object results = null;
         Object channel = null;
         Object item = null;
