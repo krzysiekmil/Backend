@@ -59,12 +59,10 @@ public class StepScopeTest {
   public void test() {
     assertEquals(true, true);
   }
-
   @Test
   public void getWeaterUrlReader() {
     assertEquals(reader.getWeatherUrl("Warszawa"), weatherUrl);
   }
-
   @Test
   public void readScope() throws Exception {
     List<City> cityList = new ArrayList<>();
@@ -83,7 +81,6 @@ public class StepScopeTest {
       });
     assertNotNull(count);
   }
-
   @Test
   public void getTempDataProcessor() throws IOException {
     processor = new Processor();
@@ -92,13 +89,11 @@ public class StepScopeTest {
     Object test = mapm.get("query");
     assertEquals(processor.getTempData(test), "47");
   }
-
   @Test
   public void processorEmpty() throws Exception {
     processor = new Processor();
     assertNull(processor.process(new CityDataDto("", Collections.emptyMap())));
   }
-
   @Test
   public void processor() throws Exception {
     processor = new Processor();
@@ -106,13 +101,11 @@ public class StepScopeTest {
     }));
     assertNotNull(processor.process(dto));
   }
-
   @Test
   public void celToFahProcessor() {
     processor = new Processor();
     assertEquals(processor.celToFah("46"), "7");
   }
-
   @Test
   public void writerScope() throws Exception {
     List<CityData> cityDataList = new ArrayList<>();
@@ -120,10 +113,10 @@ public class StepScopeTest {
     StepExecution execution = MetaDataInstanceFactory.createStepExecution();
     assertNotNull(StepScopeTestUtils.doInStepScope(execution,
       () -> {
-        writer.write();
+        writer.write(cityDataList);
+        return true;
       }));
   }
-
   @Test
   public void writerScopeEmpty() throws Exception {
     List<CityData> cityDataList = new ArrayList<>();
