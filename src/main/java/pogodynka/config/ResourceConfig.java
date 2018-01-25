@@ -38,7 +38,7 @@ public class ResourceConfig extends ResourceServerConfigurerAdapter {
     httpSecurity
       .authorizeRequests()
       .antMatchers("/test").permitAll()
-      .antMatchers("/city", "*/cityData", "/cityDatat").permitAll();
+      .antMatchers("/city", "*/cityData", "/cityDatat", "/user").permitAll();
 
   }
 

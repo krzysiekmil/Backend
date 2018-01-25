@@ -16,10 +16,10 @@ public class Writer implements ItemWriter<CityData> {
 
     @Override
     public void write(List<? extends CityData> listOfList) {
-      if (listOfList == null) {
-        for(CityData cityData:listOfList){
+
+      for(CityData cityData:listOfList){
           CityData test = cityData;
-        }
+
         cityDataRepository.save(listOfList);
       }
     }

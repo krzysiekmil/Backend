@@ -17,7 +17,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import pogodynka.config.BatchConfig;
 import pogodynka.model.City;
-import pogodynka.model.CityData;
 import pogodynka.repository.CityDataRepository;
 import pogodynka.repository.CityRepository;
 import pogodynka.step.cityStep.CityDataDto;
@@ -32,8 +31,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = BatchConfig.class)
@@ -106,23 +103,6 @@ public class StepScopeTest {
     processor = new Processor();
     assertEquals(processor.celToFah("46"), "7");
   }
-  @Test
-  public void writerScope() throws Exception {
-    List<CityData> cityDataList = new ArrayList<>();
-    cityDataList.add(new CityData("Warszawa", "3", "12:00"));
-    StepExecution execution = MetaDataInstanceFactory.createStepExecution();
-    assertNotNull(StepScopeTestUtils.doInStepScope(execution,
-      () -> {
-        writer.write(cityDataList);
-        return true;
-      }));
-  }
-  @Test
-  public void writerScopeEmpty() throws Exception {
-    List<CityData> cityDataList = new ArrayList<>();
-    cityDataList.add(new CityData("Warszawa", "3", "12:00"));
-    StepExecution execution = MetaDataInstanceFactory.createStepExecution();
-    verify(writer.cityDataRepository.save(cityDataList), times(1));
 
-  }
+
 }

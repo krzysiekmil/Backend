@@ -68,6 +68,11 @@ public class Controller {
     }
   }
 
+  @GetMapping("/test")
+  public String test() {
+    return "DZIALA";
+  }
+
   @PostMapping("/user")
   public void AddUser(@RequestBody AppUser appUser, @RequestParam(value = "city", required = false) String city) throws JpaSystemException {
     List<AppUserRole> roles = new ArrayList<>();
