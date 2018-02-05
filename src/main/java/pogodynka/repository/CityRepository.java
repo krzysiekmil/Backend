@@ -17,6 +17,8 @@ public interface CityRepository extends JpaRepository<City,Long>
   void removeCity(Long city_id);
 
   @Query(value = "INSERT INTO user_cities VALUES (?1,?2) ", nativeQuery = true)
-  public void addCity(Long user_id, Long city_id);
+  void addCity(Long user_id, Long city_id);
 
+  @Query(value = "SELECT id,name FROM city ", nativeQuery = true)
+  List<City> listCity();
 }

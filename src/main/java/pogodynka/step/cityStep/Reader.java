@@ -79,7 +79,7 @@ public class Reader implements ItemReader<CityDataDto> {
             if(city != null)
                 cityIterator = Arrays.asList(city).iterator();
             else {
-                List<City> cityList = cityRepository.findAll();
+              List<City> cityList = cityRepository.listCity();
                 if(cityList != null)
                     cityIterator = cityList
                             .stream()

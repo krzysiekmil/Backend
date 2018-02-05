@@ -38,12 +38,11 @@ public class Controller {
   @Autowired
   CityDataRepository cityDataRepository;
 
-
   @Autowired
   Job job;
 
   @Autowired
-  Job updateData;
+  Job forecast;
 
   @Autowired
   CityRepository cityRepository;
@@ -188,4 +187,13 @@ public class Controller {
         jobLauncher.run(job, jobParameters);
       }
     }
+
+  @Scheduled(fixedRate = 3000000)
+  @PostMapping("/forecast")
+  public void updateForecast() throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
+    JobParameters jobParameters = new JobParametersBuilder()
+      .addLong("time", System.nanoTime())
+      .toJobParameters();
+    jobLauncher.run(forecast, jobParameters);
+  }
 }

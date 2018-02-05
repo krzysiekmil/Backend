@@ -17,6 +17,9 @@ import pogodynka.step.cityStep.CityDataDto;
 import pogodynka.step.cityStep.Processor;
 import pogodynka.step.cityStep.Reader;
 import pogodynka.step.cityStep.Writer;
+import pogodynka.step.forecastStep.ForecastProcessor;
+import pogodynka.step.forecastStep.ForecastReader;
+import pogodynka.step.forecastStep.ForecastWriter;
 
 import java.io.IOException;
 
@@ -41,6 +44,15 @@ public class BatchConfig {
                 .end()
                 .build();
     }
+
+  @Bean
+  public Job forecast(Step forecastStep) {
+    return jobBuilderFactory.get("forecastJob")
+      .incrementer(new RunIdIncrementer())
+      .flow(forecastStep)
+      .end()
+      .build();
+  }
 
     @Bean
     @StepScope
@@ -67,5 +79,15 @@ public class BatchConfig {
                 .writer(writer)
                 .build();
     }
+
+  @Bean
+  public Step forecastStep(ForecastProcessor processor, ForecastReader reader, ForecastWriter writer) throws Exception {
+    return stepBuilderFactory.get("forecastStep")
+      .chunk(1)
+      .reader(reader)
+      .processor(processor)
+      .writer(writer)
+      .build();
+  }
 
 }
